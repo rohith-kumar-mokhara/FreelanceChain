@@ -75,3 +75,10 @@ Open new terminal and
 
 
 FreelanceChain aims to revolutionize the way freelancers and clients interact by leveraging the power of blockchain technology to ensure fairness, security, and efficiency in freelance project management.
+
+## Contribution by Team Members:
+
+- **K Vijay Karthick**: Has written code for smart contracts and using web3 to integrate into the project and integrating all the smart contract functions from interact.ts in to the frontend
+- **Rohith**: Has written code for the frontend .
+- **Sudheer**: Has debugged all the frontend code
+- **Eswar**: Made sure the UI looks attractive
