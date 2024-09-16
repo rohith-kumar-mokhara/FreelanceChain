@@ -1,50 +1,77 @@
-# React + TypeScript + Vite
+# FreelanceChain
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FreelanceChain is a decentralized application (dApp) designed to connect freelancers with clients seeking to complete projects. Utilizing Ethereum blockchain technology, FreelanceChain automates project requests, project completion, and payment verification. This ensures transparency, security, and efficiency for all parties involved.
 
-Currently, two official plugins are available:
+## Project Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+FreelanceChain enables users to:
+- **Create Project Requests**: Clients can submit detailed project requests on the blockchain, specifying the project's scope, milestones, and budget.
+- **Accept Projects**: Freelancers can browse available projects and accept assignments based on their skills and preferences.
+- **Complete Projects**: Freelancers work on the projects and submit their progress.
+- **Automated Payments**: Upon project completion, clients can verify the work and release payments automatically through smart contracts.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React**: For building the front-end user interface of the dApp.
+- **Solidity**: For writing the smart contracts that handle project creation, verification, and payment automation.
+- **Hardhat**: For Ethereum development, including smart contract deployment and testing.
+- **JavaScript**: For integrating the smart contracts with the React front-end and handling blockchain interactions.
 
-- Configure the top-level `parserOptions` property like this:
+## Features
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### 1. Project Creation
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- **Clients** can create new project requests by specifying details such as project description, milestones, and budget.
+- The project request is stored on the Ethereum blockchain, ensuring data integrity and transparency.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### 2. Project Management
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **Freelancers** can view a list of available projects and submit proposals.
+- Once a freelancer is selected, they can start working on the project and update their progress.
+
+### 3. Payment Automation
+
+- **Smart Contracts** handle payment processes. Payments are automatically triggered upon project verification.
+- **Clients** can verify project completion and release funds to freelancers based on smart contract conditions.
+
+### 4. Verification and Completion
+
+- **Verification** of project completion is handled through smart contracts, ensuring that all milestones are met before payments are released.
+
+
+## Getting Started
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/rohith-kumar-mokhara/bloGz.git
+   ```
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Install Dependencies**:
+   ```bash
+   cd contract
+   npm install
+   ```
+4. **Compilation**
+   ```bash
+   node compile.cjs
+   npm i web3 solc hardhat
+   ```
+5. **Hardhat**
+  ```bash
+   npx hardhat init
+   npx hardhat node
+  ```
+Open new terminal and
+6. ***Run These***
+```bash
+   cd contract
+   node index.cjs
+   node deploy.cjs
+  ```
+
+
+
+FreelanceChain aims to revolutionize the way freelancers and clients interact by leveraging the power of blockchain technology to ensure fairness, security, and efficiency in freelance project management.
