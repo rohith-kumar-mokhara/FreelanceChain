@@ -9,19 +9,19 @@ import {
   Button,
   Alert,
 } from '@mui/material';
-import { verifyProjectAndPay } from '../../../contract/interact'; // Adjust the import path as needed
+import { takeUpProject } from '../../../contract/interact'; // Adjust the import path as needed
 
-const PaymentIntegration = () => {
-  const [id, setId] = useState<number | ''>('');
-  const [noOfMilestones, setNoOfMilestones] = useState<number | ''>('');
+const TakeUp = () => {
+  const [freelancerId, setFreelancerId] = useState<number | ''>('');
+  const [projectId, setProjectId] = useState<number | ''>('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const handleVerifyAndPay = async () => {
-    if (id !== '' && noOfMilestones !== '') {
+  const handleTakeUpProject = async () => {
+    if (freelancerId !== '' && projectId !== '') {
       try {
-        await verifyProjectAndPay(id,noOfMilestones);
-        setSuccess('Payment successful!');
+        await takeUpProject(Number(freelancerId), Number(projectId));
+        setSuccess('Project taken up successfully!');
         setError(null);
       } catch (err) {
         setError(`Error: ${(err as Error).message}`);
@@ -37,39 +37,39 @@ const PaymentIntegration = () => {
       {/* Page Title */}
       <Box my={4}>
         <Typography variant="h4" gutterBottom>
-          Payment Integration
+          Project Management
         </Typography>
         <Typography variant="subtitle1" color="textSecondary">
-          Verify project and make a payment.
+          Take up a project and manage your tasks.
         </Typography>
       </Box>
 
-      {/* Payment Form */}
+      {/* Take Up Project Form */}
       <Card variant="outlined" sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Verify and Pay
+            Take Up a Project
           </Typography>
+          <TextField
+            label="Freelancer ID"
+            variant="outlined"
+            fullWidth
+            type="number"
+            value={freelancerId}
+            onChange={(e) => setFreelancerId(parseInt(e.target.value))}
+            sx={{ mb: 2 }}
+          />
           <TextField
             label="Project ID"
             variant="outlined"
             fullWidth
             type="number"
-            value={id}
-            onChange={(e) => setId(parseInt(e.target.value))}
+            value={projectId}
+            onChange={(e) => setProjectId(parseInt(e.target.value))}
             sx={{ mb: 2 }}
           />
-          <TextField
-            label="Number of Milestones"
-            variant="outlined"
-            fullWidth
-            type="number"
-            value={noOfMilestones}
-            onChange={(e) => setNoOfMilestones(parseInt(e.target.value))}
-            sx={{ mb: 2 }}
-          />
-          <Button variant="contained" color="primary" fullWidth onClick={handleVerifyAndPay}>
-            Verify and Pay
+          <Button variant="contained" color="primary" fullWidth onClick={handleTakeUpProject}>
+            Take Up Project
           </Button>
           {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
           {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
@@ -79,4 +79,4 @@ const PaymentIntegration = () => {
   );
 };
 
-export default PaymentIntegration;
+export default TakeUp;

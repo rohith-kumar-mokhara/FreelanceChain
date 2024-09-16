@@ -4,39 +4,38 @@ import {
   TextField,
   Button,
   Typography,
-  Grid,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
   Box,
+  CircularProgress,
+  Alert
 } from '@mui/material';
+import { registerFreelance } from '../../../contract/interact.ts'; // Adjust the import path as needed
 
+const SignUp: React.FC = () => {
+  const [walletAddress, setWalletAddress] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-const SignUp = () => {
-  const [role, setRole] = useState('freelancer');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
-
-  const handleInputChange = (e:any) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWalletAddress(e.target.value);
   };
 
-  const handleRoleChange = (e:any) => {
-    setRole(e.target.value);
-  };
-
-  const handleSubmit = (e:any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission and DID integration logic here
-    console.log('Form Data:', formData, 'Role:', role);
+    if (!walletAddress) return; // Ensure wallet address is provided
+
+    setLoading(true);
+    setMessage(null);
+    setError(null);
+
+    try {
+      await registerFreelance(walletAddress);
+      setMessage('Freelancer successfully registered!');
+    } catch (err) {
+      setError(`Error: ${(err as Error).message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,96 +45,49 @@ const SignUp = () => {
           Sign Up
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
-          Join OGhire as a freelancer or client and start collaborating with trust and transparency.
+          Register as a freelancer by providing your wallet address.
         </Typography>
       </Box>
 
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          {/* Name Field */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              variant="outlined"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
-          </Grid>
+        <TextField
+          fullWidth
+          label="Wallet Address"
+          variant="outlined"
+          value={walletAddress}
+          onChange={handleInputChange}
+          required
+          margin="normal"
+          InputLabelProps={{
+            style: { color: 'gray' }, // Label color
+          }}
+          InputProps={{
+            style: { color: 'black' }, // Input text color
+          }}
+        />
 
-          {/* Email Field */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              type="email"
-              variant="outlined"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-          </Grid>
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Register'}
+        </Button>
 
-          {/* Password Field */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
-              type="password"
-              variant="outlined"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
-          </Grid>
-
-          {/* Role Selection */}
-          <Grid item xs={12}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Sign Up as</FormLabel>
-              <RadioGroup row name="role" value={role} onChange={handleRoleChange}>
-                <FormControlLabel
-                  value="freelancer"
-                  control={<Radio />}
-                  label="Freelancer"
-                />
-                <FormControlLabel
-                  value="client"
-                  control={<Radio />}
-                  label="Client"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-
-          {/* DID Integration (Optional) */}
-          <Grid item xs={12}>
-            <Button
-              variant="contained"
-              color="secondary"
-              fullWidth
-              onClick={() => console.log('Integrating DID...')}
-            >
-              Integrate Decentralized Identity (DID)
-            </Button>
-          </Grid>
-
-          {/* Submit Button */}
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-            >
-              Sign Up
-            </Button>
-          </Grid>
-        </Grid>
+        {/* Success or Error Message */}
+        {message && (
+          <Box mt={2}>
+            <Alert severity="success">{message}</Alert>
+          </Box>
+        )}
+        {error && (
+          <Box mt={2}>
+            <Alert severity="error">{error}</Alert>
+          </Box>
+        )}
       </form>
     </Container>
   );

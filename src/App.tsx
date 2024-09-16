@@ -12,7 +12,8 @@ import EscrowManage from './pages/escrowManage/escrowManage'
 import ReviewPage from './pages/reviewPage/reviewPage'
 import PaymentIntegration from './pages/paymentIntegration/paymentIntegration'
 import ResolutionPage from './pages/resolutionPage/resolutionPage'
-
+import CreateProject from './pages/createProject/createProject';
+import TakeUp from './pages/takeUpProject/takeUp'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -25,12 +26,14 @@ function App() {
       <Route path='/login' element = {<Login />} /> 
       <Route path='/profile' element = {<Profile />} /> 
       <Route path='/projectList' element = {<ProjectList/>} /> 
-      <Route path='/projectDetails' element = {<ProjectDetails/>} /> 
-      <Route path='/projectSubmission' element = {<ProjectSubmission/>} /> 
+      {/* <Route path='/projectDetails' element = {<ProjectDetails/>} />  */}
+      {/* <Route path='/projectSubmission' element = {<ProjectSubmission/>} />  */}
       <Route path='/escrowManage' element = {<EscrowManage/>} /> 
       <Route path='/reviewPage' element = {<ReviewPage/>} /> 
       <Route path='/paymentIntegration' element = {<PaymentIntegration/>} /> 
       <Route path='/resolution' element = {<ResolutionPage/>} /> 
+      <Route path='/createProject' element = {<CreateProject/>} /> 
+      <Route path='/takeUp' element = {<TakeUp/>} /> 
     </Routes>
     </BrowserRouter>
     </>

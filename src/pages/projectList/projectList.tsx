@@ -1,170 +1,123 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Grid,
   Typography,
-  TextField,
-  MenuItem,
   Box,
   Button,
   Card,
   CardContent,
   CardActions,
   Divider,
-  Select,
-  InputLabel,
-  FormControl
+  CircularProgress,
+  Alert,
 } from '@mui/material';
+import { getProjects } from '../../../contract/interact'; // Adjust the import path as needed
 
-const projectData = [
-  {
-    id: 1,
-    title: 'Blockchain Integration for E-commerce',
-    category: 'Blockchain',
-    budget: '1000-5000 USD',
-    deadline: '2 weeks',
-    description: 'Develop a decentralized payment system for an e-commerce platform.'
-  },
-  {
-    id: 2,
-    title: 'React Web App Development',
-    category: 'Web Development',
-    budget: '500-2000 USD',
-    deadline: '1 month',
-    description: 'Build a responsive web app using React and Material UI.'
-  },
-  {
-    id: 3,
-    title: 'Smart Contract Auditing',
-    category: 'Blockchain',
-    budget: '2000-7000 USD',
-    deadline: '1 month',
-    description: 'Audit smart contracts for vulnerabilities and improve security.'
-  }
-];
+// Define TypeScript interface for project data
+interface Project {
+  FreelancerId: number;
+  isCompleted: boolean;
+  noOfMilestones: number;
+  noOfMilestonesCompleted: number;
+  amount: number;
+  isTakenUp: boolean;
+  description: string;
+}
 
-const ProjectList = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [category, setCategory] = useState('');
-  const [budget, setBudget] = useState('');
-  const [deadline, setDeadline] = useState('');
+const ProjectList: React.FC = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearchChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setSearchTerm(e.target.value);
-  };
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Fetch the raw data
+        const fetchedProjectsRaw = await getProjects();
+        
+        // Map the raw data to the Project interface
+        const fetchedProjects: Project[] = fetchedProjectsRaw.map((project: any) => ({
+          FreelancerId: Number(project[0]), // Convert BigInt to number
+          isCompleted: project[1],
+          noOfMilestones: Number(project[2]), // Convert BigInt to number
+          noOfMilestonesCompleted: Number(project[3]), // Convert BigInt to number
+          amount: Number(project[4]), // Convert BigInt to number
+          isTakenUp: project[5],
+          description: project[6],
+        }));
+        
+        setProjects(fetchedProjects);
+      } catch (err) {
+        setError(`Error fetching projects: ${(err as Error).message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleCategoryChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setCategory(e.target.value);
-  };
+    fetchProjects();
+  }, []);
 
-  const handleBudgetChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setBudget(e.target.value);
-  };
-
-  const handleDeadlineChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setDeadline(e.target.value);
-  };
-
-  const filteredProjects = projectData.filter((project) => {
-    return (
-      (category === '' || project.category === category) &&
-      (budget === '' || project.budget === budget) &&
-      (deadline === '' || project.deadline === deadline) &&
-      (searchTerm === '' || project.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  });
+  console.log(projects); // For debugging
 
   return (
     <Container maxWidth="lg">
-      {/* Search and Filter Section */}
       <Box my={4}>
         <Typography variant="h4" gutterBottom>
-          Browse Available Projects
+          Available Projects
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <TextField
-              label="Search Projects"
-              variant="outlined"
-              fullWidth
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
+        {loading ? (
+          <Box textAlign="center" mt={4}>
+            <CircularProgress />
+            <Typography variant="body1" mt={2}>Loading projects...</Typography>
+          </Box>
+        ) : error ? (
+          <Box mt={2}>
+            <Alert severity="error">{error}</Alert>
+          </Box>
+        ) : (
+          <Grid container spacing={4}>
+            {projects.map((project, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Project {index}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      Freelancer ID: {project.FreelancerId}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      Completed: {project.isCompleted ? 'Yes' : 'No'}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      No. of Milestones: {project.noOfMilestones}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      Milestones Completed: {project.noOfMilestonesCompleted}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      Amount: {project.amount}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      Taken Up: {project.isTakenUp ? 'Yes' : 'No'}
+                    </Typography>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography variant="body2">{project.description}</Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      View Details
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-
-          <Grid item xs={12} md={2}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>Category</InputLabel>
-              <Select value={category} onChange={handleCategoryChange} label="Category">
-                <MenuItem value="">All Categories</MenuItem>
-                <MenuItem value="Blockchain">Blockchain</MenuItem>
-                <MenuItem value="Web Development">Web Development</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} md={2}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>Budget</InputLabel>
-              <Select value={budget} onChange={handleBudgetChange} label="Budget">
-                <MenuItem value="">Any Budget</MenuItem>
-                <MenuItem value="500-2000 USD">500-2000 USD</MenuItem>
-                <MenuItem value="1000-5000 USD">1000-5000 USD</MenuItem>
-                <MenuItem value="2000-7000 USD">2000-7000 USD</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} md={2}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>Deadline</InputLabel>
-              <Select value={deadline} onChange={handleDeadlineChange} label="Deadline">
-                <MenuItem value="">Any Deadline</MenuItem>
-                <MenuItem value="1 week">1 week</MenuItem>
-                <MenuItem value="2 weeks">2 weeks</MenuItem>
-                <MenuItem value="1 month">1 month</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} md={2}>
-            <Button variant="contained" color="primary" fullWidth sx={{ height: '100%' }}>
-              Search
-            </Button>
-          </Grid>
-        </Grid>
+        )}
       </Box>
-
-      {/* Project Listings */}
-      <Grid container spacing={4}>
-        {filteredProjects.map((project) => (
-          <Grid item xs={12} md={4} key={project.id}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {project.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  Category: {project.category}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  Budget: {project.budget}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  Deadline: {project.deadline}
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="body2">{project.description}</Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" color="primary">
-                  View Details
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
     </Container>
   );
 };
